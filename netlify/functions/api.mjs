@@ -115,9 +115,12 @@ function requireAdmin(request) {
 
 function getRequestPath(request) {
   const url = new URL(request.url);
-  const pathname = url.pathname.startsWith(FUNCTION_PREFIX)
-    ? url.pathname.slice(FUNCTION_PREFIX.length) || "/"
-    : url.pathname;
+  let pathname = url.pathname;
+  if (pathname.startsWith(FUNCTION_PREFIX)) {
+    pathname = pathname.slice(FUNCTION_PREFIX.length) || "/";
+  } else if (pathname === "/api" || pathname.startsWith("/api/")) {
+    pathname = pathname.slice("/api".length) || "/";
+  }
   return { pathname, searchParams: url.searchParams };
 }
 

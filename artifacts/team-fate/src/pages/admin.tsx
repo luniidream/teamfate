@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useAdminMe, useAdminLogin, useAdminLogout } from "@workspace/api-client-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAdminMe, useAdminLogout } from "@workspace/api-client-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getApiUrl } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,9 +15,33 @@ import BountiesTab from "@/components/admin/BountiesTab";
 import NextEventTab from "@/components/admin/NextEventTab";
 import SiteContentTab from "@/components/admin/SiteContentTab";
 
+type AdminLoginResult = { success: boolean; message?: string };
+
+async function postAdminLogin(password: string): Promise<AdminLoginResult> {
+  const res = await fetch(getApiUrl("/api/admin/login"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ password }),
+  });
+  let data: AdminLoginResult = { success: false };
+  try {
+    data = (await res.json()) as AdminLoginResult;
+  } catch {
+    /* non-JSON response */
+  }
+  if (res.status === 401) {
+    return { success: false, message: data.message ?? "Invalid password" };
+  }
+  if (!res.ok) {
+    throw new Error(data.message ?? `Login failed (${res.status})`);
+  }
+  return data;
+}
+
 export default function Admin() {
   const { data: adminMe, isLoading } = useAdminMe();
-  const loginMutation = useAdminLogin();
+  const loginMutation = useMutation({ mutationFn: postAdminLogin });
   const logoutMutation = useAdminLogout();
   const [password, setPassword] = useState("");
   const { toast } = useToast();
@@ -24,18 +49,26 @@ export default function Admin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({ data: { password } }, {
+    loginMutation.mutate(password, {
       onSuccess: (res) => {
         if (res.success) {
           toast({ title: "Access Granted", description: "Welcome to the command center." });
           queryClient.invalidateQueries({ queryKey: ["/api/admin/me"] });
         } else {
-          toast({ title: "Access Denied", description: "Incorrect password.", variant: "destructive" });
+          toast({
+            title: "Access Denied",
+            description: res.message ?? "Incorrect password.",
+            variant: "destructive",
+          });
         }
       },
-      onError: () => {
-        toast({ title: "Error", description: "Failed to verify credentials.", variant: "destructive" });
-      }
+      onError: (err) => {
+        toast({
+          title: "Error",
+          description: err instanceof Error ? err.message : "Failed to verify credentials.",
+          variant: "destructive",
+        });
+      },
     });
   };
 
