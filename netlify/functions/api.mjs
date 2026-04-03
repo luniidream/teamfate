@@ -3,7 +3,7 @@ import { getStore } from "@netlify/blobs";
 const STATE_STORE = "team-fate-state";
 const UPLOADS_STORE = "team-fate-uploads";
 const STATE_KEY = "db";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "teamfate2024";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "teamfate2025";
 const FUNCTION_PREFIX = "/.netlify/functions/api";
 
 const DEFAULT_SETTINGS = {

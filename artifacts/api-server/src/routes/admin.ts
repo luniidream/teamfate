@@ -4,7 +4,7 @@ import { AdminLoginBody } from "@workspace/api-zod";
 
 const router = Router();
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "teamfate2024";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "teamfate2025";
 
 router.post("/login", (req: Request, res: Response) => {
   const parsed = AdminLoginBody.safeParse(req.body);

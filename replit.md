@@ -27,7 +27,7 @@ Full-stack Pokemon shiny tracking website for Team Fate — a shiny hunting comm
 
 ## Admin Access
 
-Default password: `teamfate2024`
+Default password: `teamfate2025`
 Set `ADMIN_PASSWORD` environment variable to change it.
 
 ## Database Tables
