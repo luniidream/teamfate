@@ -12,6 +12,7 @@ import ShiniesTab from "@/components/admin/ShiniesTab";
 import ShinyTypesTab from "@/components/admin/ShinyTypesTab";
 import BountiesTab from "@/components/admin/BountiesTab";
 import NextEventTab from "@/components/admin/NextEventTab";
+import SiteContentTab from "@/components/admin/SiteContentTab";
 
 export default function Admin() {
   const { data: adminMe, isLoading } = useAdminMe();
@@ -104,6 +105,7 @@ export default function Admin() {
           <TabsTrigger value="shiny-types" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">SHINY TYPES</TabsTrigger>
           <TabsTrigger value="bounties" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">BOUNTIES</TabsTrigger>
           <TabsTrigger value="event" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">NEXT EVENT</TabsTrigger>
+          <TabsTrigger value="site-content" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">SITE CONTENT</TabsTrigger>
         </TabsList>
         
         <div className="glass-panel p-6 rounded-xl border-white/5">
@@ -112,6 +114,7 @@ export default function Admin() {
           <TabsContent value="shiny-types" className="mt-0"><ShinyTypesTab /></TabsContent>
           <TabsContent value="bounties" className="mt-0"><BountiesTab /></TabsContent>
           <TabsContent value="event" className="mt-0"><NextEventTab /></TabsContent>
+          <TabsContent value="site-content" className="mt-0"><SiteContentTab /></TabsContent>
         </div>
       </Tabs>
     </div>

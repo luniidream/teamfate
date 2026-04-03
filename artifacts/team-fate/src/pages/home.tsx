@@ -13,7 +13,7 @@ export default function Home() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <header className="space-y-2">
         <h1 className="text-4xl font-mono font-bold tracking-tight text-white neon-text-pink">
-          GUILD HALL
+          HOME
         </h1>
         <p className="text-muted-foreground text-lg">
           Welcome to Team Fate's central hub. Track, hunt, and celebrate.

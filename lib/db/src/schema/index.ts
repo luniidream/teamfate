@@ -3,3 +3,4 @@ export * from "./shiny-types";
 export * from "./shinies";
 export * from "./bounties";
 export * from "./events";
+export * from "./site-settings";

@@ -2,16 +2,19 @@ import { Link, useLocation } from "wouter";
 import { Sparkles, LayoutDashboard, Grid, GalleryVerticalEnd, Info, ShieldAlert, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export function Navbar() {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: settings } = useSiteSettings();
 
   const navLinks = [
-    { href: "/", label: "Guild Hall", icon: LayoutDashboard },
-    { href: "/shiny-dex", label: "Shiny Dex", icon: Grid },
-    { href: "/showcase", label: "Showcase", icon: GalleryVerticalEnd },
-    { href: "/about", label: "About Team", icon: Info },
+    { href: "/", label: settings?.navHomeLabel ?? "Home", icon: LayoutDashboard },
+    { href: "/about", label: settings?.navTeamInfoLabel ?? "Team Info", icon: Info },
+    { href: "/showcase", label: settings?.navShowcaseLabel ?? "Shiny Showcase", icon: GalleryVerticalEnd },
+    { href: "/shiny-dex", label: settings?.navShinyDexLabel ?? "Shiny Dex", icon: Grid },
+    { href: "/recruitment", label: settings?.navRecruitmentLabel ?? "Recruitment", icon: Info },
   ];
 
   return (

@@ -9,6 +9,7 @@ import eventsRouter from "./events";
 import statsRouter from "./stats";
 import pokedexRouter from "./pokedex";
 import uploadsRouter from "./uploads";
+import siteSettingsRouter from "./site-settings";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use("/events", eventsRouter);
 router.use("/stats", statsRouter);
 router.use("/pokedex", pokedexRouter);
 router.use("/uploads", uploadsRouter);
+router.use("/site-settings", siteSettingsRouter);
 
 export default router;

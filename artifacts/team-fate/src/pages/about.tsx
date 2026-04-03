@@ -1,12 +1,15 @@
 import { useListMembers } from "@workspace/api-client-react";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 import { Users, Star, Info, Target, Sparkles, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 export default function About() {
   const { data: members, isLoading } = useListMembers();
+  const { data: settings } = useSiteSettings();
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -15,11 +18,19 @@ export default function About() {
           <Sparkles className="w-10 h-10 text-primary" />
         </div>
         <h1 className="text-4xl font-mono font-bold tracking-tight text-white neon-text-pink">
-          TEAM FATE
+          {settings?.teamInfoTitle ?? "TEAM FATE"}
         </h1>
         <p className="text-muted-foreground text-lg">
-          We are a dedicated community of Pokémon shiny hunters. Our mission is to track down the rarest alternate-colored Pokémon across all regions, document our journeys, and celebrate every sparkle.
+          {settings?.teamInfoDescription ??
+            "We are a dedicated community of Pokemon shiny hunters. Track down rare catches and celebrate every sparkle."}
         </p>
+        <div>
+          <Link href="/recruitment">
+            <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
+              {settings?.teamInfoButtonLabel ?? "Go to Recruitment"}
+            </Button>
+          </Link>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

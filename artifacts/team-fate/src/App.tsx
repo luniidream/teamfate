@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import ShinyDex from "@/pages/shiny-dex";
 import Showcase from "@/pages/showcase";
 import About from "@/pages/about";
+import Recruitment from "@/pages/recruitment";
 import Admin from "@/pages/admin";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ function Router() {
           <Route path="/shiny-dex" component={ShinyDex} />
           <Route path="/showcase" component={Showcase} />
           <Route path="/about" component={About} />
+          <Route path="/recruitment" component={Recruitment} />
           <Route path="/admin" component={Admin} />
           <Route component={NotFound} />
         </Switch>
