@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getApiUrl } from "@/lib/api";
 
 export type SiteSettings = {
   id?: number;
@@ -32,14 +33,14 @@ export const defaultSiteSettings: SiteSettings = {
 };
 
 async function fetchSettings(): Promise<SiteSettings> {
-  const res = await fetch("/api/site-settings");
+  const res = await fetch(getApiUrl("/api/site-settings"));
   if (!res.ok) return defaultSiteSettings;
   const data = (await res.json()) as Partial<SiteSettings>;
   return { ...defaultSiteSettings, ...data };
 }
 
 async function putSettings(payload: SiteSettings): Promise<SiteSettings> {
-  const res = await fetch("/api/site-settings", {
+  const res = await fetch(getApiUrl("/api/site-settings"), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

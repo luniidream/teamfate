@@ -1,0 +1,8 @@
+[build]
+  command = "pnpm --filter @workspace/team-fate build"
+  publish = "artifacts/team-fate/dist/public"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
