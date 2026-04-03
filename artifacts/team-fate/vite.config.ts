@@ -15,6 +15,8 @@ const basePath = process.env.BASE_PATH;
 
 export default defineConfig({
   base: basePath || "/",
+  /** Load `VITE_*` vars from monorepo root `.env` (same file as local Netlify CLI). */
+  envDir: path.resolve(import.meta.dirname, "..", ".."),
   plugins: [
     react(),
     tailwindcss(),
