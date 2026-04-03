@@ -35,6 +35,9 @@ export const defaultSiteSettings: SiteSettings = {
 async function fetchSettings(): Promise<SiteSettings> {
   const res = await fetch(getApiUrl("/api/site-settings"));
   if (!res.ok) return defaultSiteSettings;
+  if (!res.headers.get("content-type")?.includes("application/json")) {
+    return defaultSiteSettings;
+  }
   const data = (await res.json()) as Partial<SiteSettings>;
   return { ...defaultSiteSettings, ...data };
 }
@@ -47,6 +50,9 @@ async function putSettings(payload: SiteSettings): Promise<SiteSettings> {
   });
   if (!res.ok) {
     throw new Error("Failed to save site settings");
+  }
+  if (!res.headers.get("content-type")?.includes("application/json")) {
+    return payload;
   }
   const data = (await res.json()) as Partial<SiteSettings>;
   return { ...defaultSiteSettings, ...data };

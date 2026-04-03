@@ -290,6 +290,26 @@ function inferResponseType(response: Response): "json" | "text" | "blob" {
   return "blob";
 }
 
+function isLikelyHtmlDocument(
+  response: Response,
+  requestInfo: { method: string; url: string },
+  body: string,
+): boolean {
+  const mediaType = getMediaType(response.headers);
+  const url = requestInfo.url.toLowerCase();
+  const trimmed = body.trimStart().toLowerCase();
+
+  if (!url.startsWith("/api/")) {
+    return false;
+  }
+
+  if (mediaType === "text/html") {
+    return true;
+  }
+
+  return trimmed.startsWith("<!doctype html") || trimmed.startsWith("<html");
+}
+
 async function parseSuccessBody(
   response: Response,
   responseType: "json" | "text" | "blob" | "auto",
@@ -308,6 +328,14 @@ async function parseSuccessBody(
 
     case "text": {
       const text = await response.text();
+      if (isLikelyHtmlDocument(response, requestInfo, text)) {
+        throw new ResponseParseError(
+          response,
+          text,
+          new TypeError("Expected API payload but received HTML document"),
+          requestInfo,
+        );
+      }
       return text === "" ? null : text;
     }
 
