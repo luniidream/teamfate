@@ -9,14 +9,14 @@
 export interface CreateShinyBody {
   pokemonId: number;
   pokemonName: string;
-  pokemonSpriteUrl: string;
+  pokemonSpriteUrl?: string | null;
   memberId: number;
   shinyTypeId?: number | null;
-  caughtAt: string;
+  caughtAt?: string | null;
   catchMethod?: string | null;
   encounterNumber?: number | null;
   location?: string | null;
   notes?: string | null;
-  isAlpha: boolean;
-  isSecret: boolean;
+  isAlpha?: boolean;
+  isSecret?: boolean;
 }

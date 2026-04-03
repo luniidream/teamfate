@@ -75,6 +75,7 @@ router.get("/", async (req: Request, res: Response) => {
     shinyTypeName: shinyType?.name || null,
     shinyTypeEmoji: shinyType?.emoji || null,
     shinyTypeIconUrl: shinyType?.iconUrl || null,
+    shinyTypeCode: shinyType?.code || null,
     caughtAt: shiny.caughtAt.toISOString(),
     catchMethod: shiny.catchMethod,
     encounterNumber: shiny.encounterNumber,
@@ -125,12 +126,13 @@ router.post("/", async (req: Request, res: Response) => {
     shinyTypeName: shinyType?.name || null,
     shinyTypeEmoji: shinyType?.emoji || null,
     shinyTypeIconUrl: shinyType?.iconUrl || null,
+    shinyTypeCode: shinyType?.code || null,
     caughtAt: shiny.caughtAt.toISOString(),
   });
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id), 10);
   const [row] = await db
     .select({ shiny: shiniesTable, member: membersTable, shinyType: shinyTypesTable })
     .from(shiniesTable)
@@ -147,23 +149,40 @@ router.get("/:id", async (req: Request, res: Response) => {
     shinyTypeName: row.shinyType?.name || null,
     shinyTypeEmoji: row.shinyType?.emoji || null,
     shinyTypeIconUrl: row.shinyType?.iconUrl || null,
+    shinyTypeCode: row.shinyType?.code || null,
     caughtAt: row.shiny.caughtAt.toISOString(),
   });
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { pokemonId, pokemonName, pokemonSpriteUrl, memberId, shinyTypeId, caughtAt, catchMethod, encounterNumber, location, notes, isAlpha, isSecret } = req.body;
-
-  const [shiny] = await db.update(shiniesTable).set({
-    pokemonId: parseInt(pokemonId),
+  const id = parseInt(String(req.params.id), 10);
+  const {
+    pokemonId,
     pokemonName,
     pokemonSpriteUrl,
-    memberId: parseInt(memberId),
-    shinyTypeId: shinyTypeId ? parseInt(shinyTypeId) : null,
+    memberId,
+    shinyTypeId,
+    caughtAt,
+    catchMethod,
+    encounterNumber,
+    location,
+    notes,
+    isAlpha,
+    isSecret,
+  } = req.body;
+
+  const pid = parseInt(String(pokemonId), 10);
+  const defaultGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${pid}.gif`;
+
+  const [shiny] = await db.update(shiniesTable).set({
+    pokemonId: pid,
+    pokemonName,
+    pokemonSpriteUrl: pokemonSpriteUrl || defaultGif,
+    memberId: parseInt(String(memberId), 10),
+    shinyTypeId: shinyTypeId ? parseInt(String(shinyTypeId), 10) : null,
     caughtAt: caughtAt ? new Date(caughtAt) : new Date(),
     catchMethod: catchMethod || null,
-    encounterNumber: encounterNumber ? parseInt(encounterNumber) : null,
+    encounterNumber: encounterNumber ? parseInt(String(encounterNumber), 10) : null,
     location: location || null,
     notes: notes || null,
     isAlpha: !!isAlpha,
@@ -184,12 +203,13 @@ router.put("/:id", async (req: Request, res: Response) => {
     shinyTypeName: shinyType?.name || null,
     shinyTypeEmoji: shinyType?.emoji || null,
     shinyTypeIconUrl: shinyType?.iconUrl || null,
+    shinyTypeCode: shinyType?.code || null,
     caughtAt: shiny.caughtAt.toISOString(),
   });
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id), 10);
   const [shiny] = await db.select().from(shiniesTable).where(eq(shiniesTable.id, id));
   if (shiny) {
     await db.update(membersTable)

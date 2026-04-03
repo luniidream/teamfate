@@ -11,6 +11,7 @@ export interface Member {
   username: string;
   displayName: string;
   avatarUrl?: string | null;
+  discordId?: string | null;
   role: string;
   joinedAt: string;
   shinyCount: number;

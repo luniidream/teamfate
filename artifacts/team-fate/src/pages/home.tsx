@@ -124,7 +124,9 @@ export default function Home() {
                     <CardTitle className="text-lg font-mono text-white">{bounty.title}</CardTitle>
                     <p className="text-sm text-muted-foreground">{bounty.description}</p>
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-xs font-bold text-secondary px-2 py-1 bg-secondary/10 rounded-full">{bounty.points} PTS</span>
+                      <span className="text-xs font-bold text-secondary px-2 py-1 bg-secondary/10 rounded-full">
+                        {bounty.points != null ? `${bounty.points} rewards` : "Rewards TBD"}
+                      </span>
                       <span className="text-xs text-muted-foreground">{bounty.month}</span>
                     </div>
                   </CardHeader>

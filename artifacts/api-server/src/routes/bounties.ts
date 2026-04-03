@@ -17,22 +17,33 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
   const { title, description, imageUrl, month, isActive, points } = req.body;
+  if (!month) {
+    res.status(400).json({ error: "month is required" });
+    return;
+  }
   const [bounty] = await db.insert(bountiesTable).values({
-    title,
-    description,
+    title: title || "Bounty",
+    description: description ?? null,
     imageUrl: imageUrl || null,
     month,
     isActive: isActive !== false,
-    points: points ? parseInt(points) : null,
+    points: points != null && points !== "" ? parseInt(String(points), 10) : null,
   }).returning();
   res.status(201).json(bounty);
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id), 10);
   const { title, description, imageUrl, month, isActive, points } = req.body;
   const [bounty] = await db.update(bountiesTable)
-    .set({ title, description, imageUrl: imageUrl || null, month, isActive: !!isActive, points: points ? parseInt(points) : null })
+    .set({
+      title,
+      description,
+      imageUrl: imageUrl || null,
+      month,
+      isActive: !!isActive,
+      points: points != null && points !== "" ? parseInt(String(points), 10) : null,
+    })
     .where(eq(bountiesTable.id, id))
     .returning();
   if (!bounty) { res.status(404).json({ error: "Not found" }); return; }
@@ -40,7 +51,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id), 10);
   await db.delete(bountiesTable).where(eq(bountiesTable.id, id));
   res.status(204).send();
 });

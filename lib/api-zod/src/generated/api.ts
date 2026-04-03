@@ -53,6 +53,7 @@ export const GetStatsResponse = zod.object({
       shinyTypeName: zod.string().nullish(),
       shinyTypeEmoji: zod.string().nullish(),
       shinyTypeIconUrl: zod.string().nullish(),
+      shinyTypeCode: zod.string().nullish(),
       caughtAt: zod.string(),
       catchMethod: zod.string().nullish(),
       encounterNumber: zod.number().nullish(),
@@ -72,6 +73,7 @@ export const ListMembersResponseItem = zod.object({
   username: zod.string(),
   displayName: zod.string(),
   avatarUrl: zod.string().nullish(),
+  discordId: zod.string().nullish(),
   role: zod.string(),
   joinedAt: zod.string(),
   shinyCount: zod.number(),
@@ -86,7 +88,8 @@ export const CreateMemberBody = zod.object({
   username: zod.string(),
   displayName: zod.string(),
   avatarUrl: zod.string().nullish(),
-  role: zod.string(),
+  discordId: zod.string().nullish(),
+  role: zod.string().optional(),
 });
 
 /**
@@ -101,6 +104,7 @@ export const GetMemberResponse = zod.object({
   username: zod.string(),
   displayName: zod.string(),
   avatarUrl: zod.string().nullish(),
+  discordId: zod.string().nullish(),
   role: zod.string(),
   joinedAt: zod.string(),
   shinyCount: zod.number(),
@@ -118,7 +122,8 @@ export const UpdateMemberBody = zod.object({
   username: zod.string(),
   displayName: zod.string(),
   avatarUrl: zod.string().nullish(),
-  role: zod.string(),
+  discordId: zod.string().nullish(),
+  role: zod.string().optional(),
 });
 
 export const UpdateMemberResponse = zod.object({
@@ -126,6 +131,7 @@ export const UpdateMemberResponse = zod.object({
   username: zod.string(),
   displayName: zod.string(),
   avatarUrl: zod.string().nullish(),
+  discordId: zod.string().nullish(),
   role: zod.string(),
   joinedAt: zod.string(),
   shinyCount: zod.number(),
@@ -166,6 +172,7 @@ export const ListShiniesResponse = zod.object({
       shinyTypeName: zod.string().nullish(),
       shinyTypeEmoji: zod.string().nullish(),
       shinyTypeIconUrl: zod.string().nullish(),
+      shinyTypeCode: zod.string().nullish(),
       caughtAt: zod.string(),
       catchMethod: zod.string().nullish(),
       encounterNumber: zod.number().nullish(),
@@ -184,16 +191,16 @@ export const ListShiniesResponse = zod.object({
 export const CreateShinyBody = zod.object({
   pokemonId: zod.number(),
   pokemonName: zod.string(),
-  pokemonSpriteUrl: zod.string(),
+  pokemonSpriteUrl: zod.string().nullish(),
   memberId: zod.number(),
   shinyTypeId: zod.number().nullish(),
-  caughtAt: zod.string(),
+  caughtAt: zod.string().nullish(),
   catchMethod: zod.string().nullish(),
   encounterNumber: zod.number().nullish(),
   location: zod.string().nullish(),
   notes: zod.string().nullish(),
-  isAlpha: zod.boolean(),
-  isSecret: zod.boolean(),
+  isAlpha: zod.boolean().optional(),
+  isSecret: zod.boolean().optional(),
 });
 
 /**
@@ -215,6 +222,7 @@ export const GetShinyResponse = zod.object({
   shinyTypeName: zod.string().nullish(),
   shinyTypeEmoji: zod.string().nullish(),
   shinyTypeIconUrl: zod.string().nullish(),
+  shinyTypeCode: zod.string().nullish(),
   caughtAt: zod.string(),
   catchMethod: zod.string().nullish(),
   encounterNumber: zod.number().nullish(),
@@ -234,16 +242,16 @@ export const UpdateShinyParams = zod.object({
 export const UpdateShinyBody = zod.object({
   pokemonId: zod.number(),
   pokemonName: zod.string(),
-  pokemonSpriteUrl: zod.string(),
+  pokemonSpriteUrl: zod.string().nullish(),
   memberId: zod.number(),
   shinyTypeId: zod.number().nullish(),
-  caughtAt: zod.string(),
+  caughtAt: zod.string().nullish(),
   catchMethod: zod.string().nullish(),
   encounterNumber: zod.number().nullish(),
   location: zod.string().nullish(),
   notes: zod.string().nullish(),
-  isAlpha: zod.boolean(),
-  isSecret: zod.boolean(),
+  isAlpha: zod.boolean().optional(),
+  isSecret: zod.boolean().optional(),
 });
 
 export const UpdateShinyResponse = zod.object({
@@ -258,6 +266,7 @@ export const UpdateShinyResponse = zod.object({
   shinyTypeName: zod.string().nullish(),
   shinyTypeEmoji: zod.string().nullish(),
   shinyTypeIconUrl: zod.string().nullish(),
+  shinyTypeCode: zod.string().nullish(),
   caughtAt: zod.string(),
   catchMethod: zod.string().nullish(),
   encounterNumber: zod.number().nullish(),
@@ -343,7 +352,7 @@ export const ListBountiesQueryParams = zod.object({
 export const ListBountiesResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
-  description: zod.string(),
+  description: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   month: zod.string(),
   isActive: zod.boolean(),
@@ -355,11 +364,11 @@ export const ListBountiesResponse = zod.array(ListBountiesResponseItem);
  * @summary Create a bounty
  */
 export const CreateBountyBody = zod.object({
-  title: zod.string(),
-  description: zod.string(),
+  title: zod.string().nullish(),
+  description: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   month: zod.string(),
-  isActive: zod.boolean(),
+  isActive: zod.boolean().optional(),
   points: zod.number().nullish(),
 });
 
@@ -371,18 +380,18 @@ export const UpdateBountyParams = zod.object({
 });
 
 export const UpdateBountyBody = zod.object({
-  title: zod.string(),
-  description: zod.string(),
+  title: zod.string().nullish(),
+  description: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   month: zod.string(),
-  isActive: zod.boolean(),
+  isActive: zod.boolean().optional(),
   points: zod.number().nullish(),
 });
 
 export const UpdateBountyResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
-  description: zod.string(),
+  description: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   month: zod.string(),
   isActive: zod.boolean(),
@@ -412,8 +421,8 @@ export const GetNextEventResponse = zod.object({
  * @summary Update the next event
  */
 export const UpdateNextEventBody = zod.object({
-  title: zod.string(),
-  description: zod.string(),
+  title: zod.string().nullish(),
+  description: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   externalUrl: zod.string().nullish(),
   eventDate: zod.string().nullish(),
@@ -462,6 +471,7 @@ export const GetPokedexResponse = zod.object({
           shinyTypeName: zod.string().nullish(),
           shinyTypeEmoji: zod.string().nullish(),
           shinyTypeIconUrl: zod.string().nullish(),
+          shinyTypeCode: zod.string().nullish(),
           caughtAt: zod.string(),
           catchMethod: zod.string().nullish(),
           encounterNumber: zod.number().nullish(),

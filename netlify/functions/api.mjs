@@ -51,10 +51,51 @@ function createInitialState() {
   };
 }
 
+/** Seeded shiny hunt categories (admin “Shiny type” dropdown). */
+const DEFAULT_SHINY_TYPES = [
+  { name: "Egg shiny", code: "egg", emoji: "🥚", sortOrder: 11 },
+  { name: "Safari shiny", code: "safari", emoji: "🦁", sortOrder: 12 },
+  { name: "Fled safari shiny", code: "fled_safari", emoji: "🏃", sortOrder: 13 },
+  { name: "Fossil shiny", code: "fossil", emoji: "🪨", sortOrder: 14 },
+  {
+    name: "Mysterious Ball shiny",
+    code: "mysterious_ball",
+    emoji: "🔮",
+    sortOrder: 15,
+  },
+];
+
+function ensureDefaultShinyTypes(state) {
+  let changed = false;
+  for (const d of DEFAULT_SHINY_TYPES) {
+    if (!state.shinyTypes.some((t) => t.code === d.code)) {
+      state.shinyTypes.push({
+        id: nextId(state, "shinyTypes"),
+        name: d.name,
+        code: d.code,
+        emoji: d.emoji,
+        iconUrl: null,
+        isEnabled: true,
+        sortOrder: d.sortOrder,
+      });
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 async function loadState() {
   const store = getStore(STATE_STORE);
   const existing = await store.get(STATE_KEY, { type: "json" });
   return existing || createInitialState();
+}
+
+async function loadStateWithDefaults() {
+  const state = await loadState();
+  if (ensureDefaultShinyTypes(state)) {
+    await saveState(state);
+  }
+  return state;
 }
 
 async function saveState(state) {
@@ -152,6 +193,7 @@ function formatShinyRecord(state, shiny) {
     shinyTypeName: shinyType?.name || null,
     shinyTypeEmoji: shinyType?.emoji || null,
     shinyTypeIconUrl: shinyType?.iconUrl || null,
+    shinyTypeCode: shinyType?.code || null,
     caughtAt: shiny.caughtAt,
     catchMethod: shiny.catchMethod,
     encounterNumber: shiny.encounterNumber,
@@ -279,7 +321,7 @@ async function handleMembers(request, state, path) {
     if (authError) return authError;
 
     const body = await readJsonBody(request);
-    if (!body.username || !body.displayName || !body.role) {
+    if (!body.username || !body.displayName) {
       return error("Missing required fields", 400);
     }
 
@@ -288,7 +330,8 @@ async function handleMembers(request, state, path) {
       username: String(body.username),
       displayName: String(body.displayName),
       avatarUrl: normalizeString(body.avatarUrl),
-      role: String(body.role),
+      discordId: normalizeString(body.discordId),
+      role: String(body.role || "member"),
       joinedAt: new Date().toISOString(),
       shinyCount: 0,
       shinyPoints: 0,
@@ -322,6 +365,10 @@ async function handleMembers(request, state, path) {
       username: String(body.username ?? member.username),
       displayName: String(body.displayName ?? member.displayName),
       avatarUrl: normalizeString(body.avatarUrl),
+      discordId:
+        body.discordId !== undefined
+          ? normalizeString(body.discordId)
+          : normalizeString(member.discordId),
       role: String(body.role ?? member.role),
     };
     await saveState(state);
@@ -459,15 +506,21 @@ async function handleShinies(request, state, path, searchParams) {
     if (authError) return authError;
 
     const body = await readJsonBody(request);
-    if (!body.pokemonId || !body.pokemonName || !body.pokemonSpriteUrl || !body.memberId) {
+    const pokemonId = parseInteger(body.pokemonId, 0) || 0;
+    const pokemonName = String(body.pokemonName || "");
+    if (!pokemonId || !pokemonName || !body.memberId) {
       return error("Missing required fields", 400);
     }
 
+    const defaultGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${pokemonId}.gif`;
+    const pokemonSpriteUrl =
+      normalizeString(body.pokemonSpriteUrl, defaultGif) || defaultGif;
+
     const shiny = {
       id: nextId(state, "shinies"),
-      pokemonId: parseInteger(body.pokemonId, 0) || 0,
-      pokemonName: String(body.pokemonName),
-      pokemonSpriteUrl: String(body.pokemonSpriteUrl),
+      pokemonId,
+      pokemonName,
+      pokemonSpriteUrl,
       memberId: parseInteger(body.memberId, 0) || 0,
       shinyTypeId: parseInteger(body.shinyTypeId),
       caughtAt: normalizeString(body.caughtAt, new Date().toISOString()),
@@ -475,8 +528,8 @@ async function handleShinies(request, state, path, searchParams) {
       encounterNumber: parseInteger(body.encounterNumber),
       location: normalizeString(body.location),
       notes: normalizeString(body.notes),
-      isAlpha: normalizeBoolean(body.isAlpha),
-      isSecret: normalizeBoolean(body.isSecret),
+      isAlpha: normalizeBoolean(body.isAlpha, false),
+      isSecret: normalizeBoolean(body.isSecret, false),
     };
 
     state.shinies.push(shiny);
@@ -502,13 +555,23 @@ async function handleShinies(request, state, path, searchParams) {
   if (request.method === "PUT") {
     if (!shiny) return error("Not found", 404);
     const body = await readJsonBody(request);
+    const nextPid = parseInteger(body.pokemonId, shiny.pokemonId) || shiny.pokemonId;
+    const defaultGif = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${nextPid}.gif`;
+    const nextSprite =
+      body.pokemonSpriteUrl != null && body.pokemonSpriteUrl !== ""
+        ? String(body.pokemonSpriteUrl)
+        : shiny.pokemonSpriteUrl || defaultGif;
+
     state.shinies[index] = {
       ...shiny,
-      pokemonId: parseInteger(body.pokemonId, shiny.pokemonId) || shiny.pokemonId,
+      pokemonId: nextPid,
       pokemonName: String(body.pokemonName ?? shiny.pokemonName),
-      pokemonSpriteUrl: String(body.pokemonSpriteUrl ?? shiny.pokemonSpriteUrl),
+      pokemonSpriteUrl: nextSprite,
       memberId: parseInteger(body.memberId, shiny.memberId) || shiny.memberId,
-      shinyTypeId: parseInteger(body.shinyTypeId),
+      shinyTypeId:
+        body.shinyTypeId === undefined
+          ? shiny.shinyTypeId
+          : parseInteger(body.shinyTypeId),
       caughtAt: normalizeString(body.caughtAt, shiny.caughtAt),
       catchMethod: normalizeString(body.catchMethod),
       encounterNumber: parseInteger(body.encounterNumber),
@@ -548,14 +611,14 @@ async function handleBounties(request, state, path, searchParams) {
     if (authError) return authError;
 
     const body = await readJsonBody(request);
-    if (!body.title || !body.description || !body.month) {
+    if (!body.month) {
       return error("Missing required fields", 400);
     }
 
     const bounty = {
       id: nextId(state, "bounties"),
-      title: String(body.title),
-      description: String(body.description),
+      title: normalizeString(body.title, "Bounty") || "Bounty",
+      description: normalizeString(body.description, "") || "",
       imageUrl: normalizeString(body.imageUrl),
       month: String(body.month),
       isActive: normalizeBoolean(body.isActive, true),
@@ -581,8 +644,11 @@ async function handleBounties(request, state, path, searchParams) {
     const current = state.bounties[index];
     state.bounties[index] = {
       ...current,
-      title: String(body.title ?? current.title),
-      description: String(body.description ?? current.description),
+      title: String(body.title ?? current.title ?? "Bounty"),
+      description:
+        body.description !== undefined
+          ? String(body.description ?? "")
+          : String(current.description ?? ""),
       imageUrl: normalizeString(body.imageUrl),
       month: String(body.month ?? current.month),
       isActive: normalizeBoolean(body.isActive, current.isActive),
@@ -613,17 +679,15 @@ async function handleEvents(request, state, path) {
     if (authError) return authError;
 
     const body = await readJsonBody(request);
-    if (!body.title || !body.description) {
-      return error("Missing required fields", 400);
-    }
+    const prev = state.nextEvent || {};
 
     state.nextEvent = {
-      id: state.nextEvent?.id || nextId(state, "events"),
-      title: String(body.title),
-      description: String(body.description),
-      imageUrl: normalizeString(body.imageUrl),
-      externalUrl: normalizeString(body.externalUrl),
-      eventDate: normalizeString(body.eventDate),
+      id: prev.id || nextId(state, "events"),
+      title: normalizeString(body.title, prev.title) || "",
+      description: normalizeString(body.description, prev.description) || "",
+      imageUrl: normalizeString(body.imageUrl, prev.imageUrl),
+      externalUrl: normalizeString(body.externalUrl, prev.externalUrl),
+      eventDate: normalizeString(body.eventDate, prev.eventDate),
     };
     await saveState(state);
     return json(state.nextEvent);
@@ -852,7 +916,7 @@ export default async function handler(request) {
     const uploadResponse = await handleUploads(request, pathname);
     if (uploadResponse) return uploadResponse;
 
-    const state = await loadState();
+    const state = await loadStateWithDefaults();
 
     const handlers = [
       () => handleMembers(request, state, pathname),

@@ -34,6 +34,7 @@ export interface ShinyRecord {
   shinyTypeName?: string | null;
   shinyTypeEmoji?: string | null;
   shinyTypeIconUrl?: string | null;
+  shinyTypeCode?: string | null;
   caughtAt: string;
   catchMethod?: string | null;
   encounterNumber?: number | null;
@@ -55,6 +56,7 @@ export interface Member {
   username: string;
   displayName: string;
   avatarUrl?: string | null;
+  discordId?: string | null;
   role: string;
   joinedAt: string;
   shinyCount: number;
@@ -65,22 +67,23 @@ export interface CreateMemberBody {
   username: string;
   displayName: string;
   avatarUrl?: string | null;
-  role: string;
+  discordId?: string | null;
+  role?: string;
 }
 
 export interface CreateShinyBody {
   pokemonId: number;
   pokemonName: string;
-  pokemonSpriteUrl: string;
+  pokemonSpriteUrl?: string | null;
   memberId: number;
   shinyTypeId?: number | null;
-  caughtAt: string;
+  caughtAt?: string | null;
   catchMethod?: string | null;
   encounterNumber?: number | null;
   location?: string | null;
   notes?: string | null;
-  isAlpha: boolean;
-  isSecret: boolean;
+  isAlpha?: boolean;
+  isSecret?: boolean;
 }
 
 export interface ShiniesListResponse {
@@ -110,7 +113,7 @@ export interface CreateShinyTypeBody {
 export interface Bounty {
   id: number;
   title: string;
-  description: string;
+  description?: string | null;
   imageUrl?: string | null;
   month: string;
   isActive: boolean;
@@ -118,11 +121,11 @@ export interface Bounty {
 }
 
 export interface CreateBountyBody {
-  title: string;
-  description: string;
+  title?: string | null;
+  description?: string | null;
   imageUrl?: string | null;
   month: string;
-  isActive: boolean;
+  isActive?: boolean;
   points?: number | null;
 }
 
@@ -136,8 +139,8 @@ export interface NextEvent {
 }
 
 export interface UpdateNextEventBody {
-  title: string;
-  description: string;
+  title?: string | null;
+  description?: string | null;
   imageUrl?: string | null;
   externalUrl?: string | null;
   eventDate?: string | null;

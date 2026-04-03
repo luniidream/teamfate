@@ -10,5 +10,6 @@ export interface CreateMemberBody {
   username: string;
   displayName: string;
   avatarUrl?: string | null;
-  role: string;
+  discordId?: string | null;
+  role?: string;
 }

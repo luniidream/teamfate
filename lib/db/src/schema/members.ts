@@ -7,6 +7,7 @@ export const membersTable = pgTable("members", {
   username: text("username").notNull().unique(),
   displayName: text("display_name").notNull(),
   avatarUrl: text("avatar_url"),
+  discordId: text("discord_id"),
   role: text("role").notNull().default("member"),
   joinedAt: timestamp("joined_at").notNull().defaultNow(),
   shinyCount: integer("shiny_count").notNull().default(0),

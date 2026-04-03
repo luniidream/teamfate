@@ -9,7 +9,7 @@
 export interface Bounty {
   id: number;
   title: string;
-  description: string;
+  description?: string | null;
   imageUrl?: string | null;
   month: string;
   isActive: boolean;

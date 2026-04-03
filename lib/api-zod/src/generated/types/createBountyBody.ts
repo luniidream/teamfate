@@ -7,10 +7,10 @@
  */
 
 export interface CreateBountyBody {
-  title: string;
-  description: string;
+  title?: string | null;
+  description?: string | null;
   imageUrl?: string | null;
   month: string;
-  isActive: boolean;
+  isActive?: boolean;
   points?: number | null;
 }

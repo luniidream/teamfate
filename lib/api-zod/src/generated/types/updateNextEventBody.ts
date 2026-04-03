@@ -7,8 +7,8 @@
  */
 
 export interface UpdateNextEventBody {
-  title: string;
-  description: string;
+  title?: string | null;
+  description?: string | null;
   imageUrl?: string | null;
   externalUrl?: string | null;
   eventDate?: string | null;

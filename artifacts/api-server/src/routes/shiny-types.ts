@@ -25,7 +25,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.put("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id), 10);
   const { name, code, emoji, iconUrl, isEnabled, sortOrder } = req.body;
   const [type] = await db.update(shinyTypesTable)
     .set({ name, code, emoji: emoji || null, iconUrl: iconUrl || null, isEnabled: !!isEnabled, sortOrder })
@@ -36,7 +36,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 router.delete("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id), 10);
   await db.delete(shinyTypesTable).where(eq(shinyTypesTable.id, id));
   res.status(204).send();
 });

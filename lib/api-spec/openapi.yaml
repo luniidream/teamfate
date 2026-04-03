@@ -600,6 +600,9 @@ components:
         avatarUrl:
           type: string
           nullable: true
+        discordId:
+          type: string
+          nullable: true
         role:
           type: string
         joinedAt:
@@ -620,9 +623,12 @@ components:
         avatarUrl:
           type: string
           nullable: true
+        discordId:
+          type: string
+          nullable: true
         role:
           type: string
-      required: [username, displayName, role]
+      required: [username, displayName]
 
     ShinyRecord:
       type: object
@@ -653,6 +659,9 @@ components:
         shinyTypeIconUrl:
           type: string
           nullable: true
+        shinyTypeCode:
+          type: string
+          nullable: true
         caughtAt:
           type: string
         catchMethod:
@@ -671,7 +680,17 @@ components:
           type: boolean
         isSecret:
           type: boolean
-      required: [id, pokemonId, pokemonName, pokemonSpriteUrl, memberId, memberUsername, memberDisplayName, caughtAt, isAlpha, isSecret]
+      required:
+        - id
+        - pokemonId
+        - pokemonName
+        - pokemonSpriteUrl
+        - memberId
+        - memberUsername
+        - memberDisplayName
+        - caughtAt
+        - isAlpha
+        - isSecret
 
     CreateShinyBody:
       type: object
@@ -682,6 +701,7 @@ components:
           type: string
         pokemonSpriteUrl:
           type: string
+          nullable: true
         memberId:
           type: integer
         shinyTypeId:
@@ -689,6 +709,7 @@ components:
           nullable: true
         caughtAt:
           type: string
+          nullable: true
         catchMethod:
           type: string
           nullable: true
@@ -705,7 +726,7 @@ components:
           type: boolean
         isSecret:
           type: boolean
-      required: [pokemonId, pokemonName, pokemonSpriteUrl, memberId, caughtAt, isAlpha, isSecret]
+      required: [pokemonId, pokemonName, memberId]
 
     ShiniesListResponse:
       type: object
@@ -767,6 +788,7 @@ components:
           type: string
         description:
           type: string
+          nullable: true
         imageUrl:
           type: string
           nullable: true
@@ -777,15 +799,17 @@ components:
         points:
           type: integer
           nullable: true
-      required: [id, title, description, month, isActive]
+      required: [id, title, month, isActive]
 
     CreateBountyBody:
       type: object
       properties:
         title:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         imageUrl:
           type: string
           nullable: true
@@ -796,7 +820,7 @@ components:
         points:
           type: integer
           nullable: true
-      required: [title, description, month, isActive]
+      required: [month]
 
     NextEvent:
       type: object
@@ -823,8 +847,10 @@ components:
       properties:
         title:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         imageUrl:
           type: string
           nullable: true
@@ -834,7 +860,7 @@ components:
         eventDate:
           type: string
           nullable: true
-      required: [title, description]
+      required: []
 
     PokedexEntry:
       type: object

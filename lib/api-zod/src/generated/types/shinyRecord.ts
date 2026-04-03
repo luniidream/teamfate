@@ -18,6 +18,7 @@ export interface ShinyRecord {
   shinyTypeName?: string | null;
   shinyTypeEmoji?: string | null;
   shinyTypeIconUrl?: string | null;
+  shinyTypeCode?: string | null;
   caughtAt: string;
   catchMethod?: string | null;
   encounterNumber?: number | null;

@@ -18,11 +18,8 @@ export default function ShinyDex() {
   const [alphaOnly, setAlphaOnly] = useState(false);
   const [secretOnly, setSecretOnly] = useState(false);
 
-  const { data: pokedexData, isLoading } = useGetPokedex({
-    query: {
-      // Refetch if search params change, though we can filter client-side for immediate feedback
-      queryKey: ["pokedex"], 
-    }
+  const { data: pokedexData, isLoading } = useGetPokedex(undefined, {
+    query: { queryKey: ["pokedex"] },
   });
 
   const entries = pokedexData?.entries || [];
