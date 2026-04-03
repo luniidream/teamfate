@@ -10,7 +10,7 @@
   },
   "private": true,
   "dependencies": {
-    "@netlify/blobs": "^9.3.0"
+    "@netlify/blobs": "^10.7.4"
   },
   "devDependencies": {
     "typescript": "~5.9.2",
