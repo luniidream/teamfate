@@ -1,0 +1,163 @@
+I want you to build a **full-featured Team Fate shiny tracking website** that replicates the attached visual style and behavior.  
+Use the screenshot as the primary design reference (soft pinkish like the logo i attached  dashboard with pixel sprites and a left control panel).
+Sprites can be taken from pokeapi 
+## 1) Product Goal
+Create a Pokemon shiny-tracking web app with:
+- a public dashboard/home
+- a shiny dex board
+- monthly bounty + next event system
+- full admin page for managing everything
+- support for **custom shiny-type emojis/icons that I can upload**
+
+## 2) Required Pages
+1. **Home page (Guild Hall style)**  
+2. **Shiny Dex page** (main board like screenshot)  
+3. **Showcase page** (latest shinies feed/cards)  
+4. **Recruitment/About pages** (basic team info)  
+5. **Admin page** (secure login + management panel)
+
+## 3) Exact Home Features
+Home must show:
+- **Status panel**:
+  - Members count
+  - Team shinies count
+  - Shiny points
+- **Latest shinies caught**:
+  - Pokemon sprite
+  - Player who caught it
+  - Date
+  - Time-range filters: This Week / Last Week / All Time
+- **Bounties** section:
+  - monthly bounty cards with image + description
+- **Next Event** section:
+  - title, description, optional image, optional external/Discord link
+
+No spotlight block needed.
+
+## 4) Shiny Dex Requirements (match screenshot vibe)
+- Left sidebar with:
+  - title
+  - legend (owned / evolution line owned / missing)
+  - completion progress text and bar
+  - toggles (Alpha only, Secret only, sounds)
+  - dropdowns (region, type)
+  - search filters (user + Pokemon)
+- Main sprite grid:
+  - pixel shiny sprites
+  - status coloring/glow per tile
+  - badges for special shiny type
+- Hover/click detail:
+  - Pokemon name/ID
+  - owners
+  - catch date
+  - method
+  - location
+  - shiny type icon/emoji
+- Must support owned/partial/missing evolution line states.
+
+## 5) Shiny Types + Emoji/Icon System (Important)
+I need both:
+1. standard emoji support (✨ etc)
+2. **custom uploaded emoji/icons** per shiny type
+
+### Required shiny type options:
+- Normal Shiny
+- Shalpha
+- Egg Shiny
+- Secret Shiny
+- Safari Shiny
+- Fled Safari Shiny
+- Event Reward Shiny
+- Game Corner Shiny
+- Fossil Redeem Shiny
+- Mysterious Ball Shiny
+
+Each type must allow:
+- label
+- code/id
+- optional emoji
+- optional custom uploaded image/icon (PNG)
+- enable/disable in filters
+
+If no special type is selected, it should still save as normal shiny (not required to choose special).
+
+## 6) Admin Page (Mandatory)
+Create a secure admin area with login password/env-based auth.
+
+Admin must manage:
+- Members (add/remove/edit)
+- Shiny catches (add/edit/remove)
+- Shiny type on each catch
+- Shiny types list (create/edit/delete)
+- Upload custom emoji/icons for shiny types
+- Bounties (add/edit/remove, month-based, image upload)
+- Next event (title/description/link/image)
+- Recent catches list with delete/edit actions
+- Optional reorder/pin controls for homepage blocks
+
+Also include:
+- logout
+- success/error toasts
+- validation messages
+- loading states
+
+## 7) Media Upload Requirements
+Support image upload for:
+- shiny type custom emoji/icons
+- bounty card image
+- next event image
+
+Uploads should be storable in a persistent way (or fallback mode if persistence layer unavailable).  
+Show previews in admin before saving.
+
+## 8) Design System
+Replicate attached style:
+- dark navy/black background
+- neon teal/green/pink glow accents
+- glass/retro panels
+- rounded grid cards
+- subtle scanline/grid texture
+- pixel-sprite-friendly rendering
+- smooth but lightweight animations
+
+Desktop-first like screenshot, with responsive mobile behavior:
+- sidebar collapses on small screens
+- filters remain usable
+- sprite grid remains performant
+
+## 9) Data Model Requirements
+Track:
+- members
+- shiny records
+- shiny types
+- evolution lines
+- monthly bounties
+- next event
+
+A shiny record should include:
+- Pokemon
+- owner
+- caught date/time
+- shiny type
+- catch method
+- encounter number (optional)
+- location (optional)
+- rarity/status metadata if needed
+
+## 10) Technical Expectations
+- Typed models
+- clean component architecture
+- modular pages/components
+- error handling around auth/storage/uploads
+- production-ready build config
+- easy deployment (Netlify-compatible)
+
+## 11) Final Output Needed
+Provide:
+1. complete code implementation
+2. file structure summary
+3. setup steps
+4. env vars needed
+5. how to upload and assign custom shiny emojis/icons
+6. how admin edits reflect on public 
+REFERENCE WEBSITES: https://team-radiance.com/, https://www.teamshroom.com/#home , https://pokemmotools.net/home

@@ -3,20 +3,37 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Team Fate Shiny Tracker API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: members
+    description: Team member operations
+  - name: shinies
+    description: Shiny catch operations
+  - name: shiny-types
+    description: Shiny type operations
+  - name: bounties
+    description: Monthly bounty operations
+  - name: events
+    description: Next event operations
+  - name: stats
+    description: Dashboard statistics
+  - name: pokemon
+    description: Pokemon dex operations
+  - name: uploads
+    description: File upload operations
+  - name: admin
+    description: Admin auth operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +41,506 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginBody"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLoginResponse"
+        "401":
+          description: Unauthorized
+
+  /admin/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+
+  /admin/me:
+    get:
+      operationId: adminMe
+      tags: [admin]
+      summary: Check admin session
+      responses:
+        "200":
+          description: Admin session info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminMeResponse"
+        "401":
+          description: Not authenticated
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get dashboard stats
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /members:
+    get:
+      operationId: listMembers
+      tags: [members]
+      summary: List all team members
+      responses:
+        "200":
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Member"
+    post:
+      operationId: createMember
+      tags: [members]
+      summary: Create a new member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMemberBody"
+      responses:
+        "201":
+          description: Member created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+
+  /members/{id}:
+    get:
+      operationId: getMember
+      tags: [members]
+      summary: Get a member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+    put:
+      operationId: updateMember
+      tags: [members]
+      summary: Update a member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMemberBody"
+      responses:
+        "200":
+          description: Updated member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+    delete:
+      operationId: deleteMember
+      tags: [members]
+      summary: Delete a member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /shinies:
+    get:
+      operationId: listShinies
+      tags: [shinies]
+      summary: List shiny catches
+      parameters:
+        - name: timeRange
+          in: query
+          schema:
+            type: string
+            enum: [week, lastWeek, all]
+        - name: memberId
+          in: query
+          schema:
+            type: integer
+        - name: pokemonId
+          in: query
+          schema:
+            type: integer
+        - name: shinyTypeId
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of shiny catches
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShiniesListResponse"
+    post:
+      operationId: createShiny
+      tags: [shinies]
+      summary: Create a shiny catch record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShinyBody"
+      responses:
+        "201":
+          description: Shiny created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShinyRecord"
+
+  /shinies/{id}:
+    get:
+      operationId: getShiny
+      tags: [shinies]
+      summary: Get a shiny catch record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Shiny record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShinyRecord"
+    put:
+      operationId: updateShiny
+      tags: [shinies]
+      summary: Update a shiny catch record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShinyBody"
+      responses:
+        "200":
+          description: Updated shiny record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShinyRecord"
+    delete:
+      operationId: deleteShiny
+      tags: [shinies]
+      summary: Delete a shiny catch record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /shiny-types:
+    get:
+      operationId: listShinyTypes
+      tags: [shiny-types]
+      summary: List all shiny types
+      responses:
+        "200":
+          description: List of shiny types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShinyType"
+    post:
+      operationId: createShinyType
+      tags: [shiny-types]
+      summary: Create a shiny type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShinyTypeBody"
+      responses:
+        "201":
+          description: Shiny type created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShinyType"
+
+  /shiny-types/{id}:
+    put:
+      operationId: updateShinyType
+      tags: [shiny-types]
+      summary: Update a shiny type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShinyTypeBody"
+      responses:
+        "200":
+          description: Updated shiny type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShinyType"
+    delete:
+      operationId: deleteShinyType
+      tags: [shiny-types]
+      summary: Delete a shiny type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /bounties:
+    get:
+      operationId: listBounties
+      tags: [bounties]
+      summary: List bounties
+      parameters:
+        - name: month
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of bounties
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bounty"
+    post:
+      operationId: createBounty
+      tags: [bounties]
+      summary: Create a bounty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBountyBody"
+      responses:
+        "201":
+          description: Bounty created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bounty"
+
+  /bounties/{id}:
+    put:
+      operationId: updateBounty
+      tags: [bounties]
+      summary: Update a bounty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBountyBody"
+      responses:
+        "200":
+          description: Updated bounty
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bounty"
+    delete:
+      operationId: deleteBounty
+      tags: [bounties]
+      summary: Delete a bounty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /events/next:
+    get:
+      operationId: getNextEvent
+      tags: [events]
+      summary: Get the next event
+      responses:
+        "200":
+          description: Next event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NextEvent"
+        "404":
+          description: No event set
+    put:
+      operationId: updateNextEvent
+      tags: [events]
+      summary: Update the next event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNextEventBody"
+      responses:
+        "200":
+          description: Updated next event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NextEvent"
+
+  /pokedex:
+    get:
+      operationId: getPokedex
+      tags: [pokemon]
+      summary: Get full pokedex with ownership status
+      parameters:
+        - name: region
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: memberId
+          in: query
+          schema:
+            type: integer
+        - name: alphaOnly
+          in: query
+          schema:
+            type: boolean
+        - name: secretOnly
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Pokedex entries with ownership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PokedexResponse"
+
+  /uploads:
+    post:
+      operationId: uploadFile
+      tags: [uploads]
+      summary: Upload a file (image)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        "200":
+          description: Upload result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResult"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +548,343 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    AdminLoginBody:
+      type: object
+      properties:
+        password:
+          type: string
+      required: [password]
+
+    AdminLoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
+
+    AdminMeResponse:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+      required: [authenticated]
+
+    DashboardStats:
+      type: object
+      properties:
+        memberCount:
+          type: integer
+        totalShinies:
+          type: integer
+        shinyPoints:
+          type: integer
+        recentCatches:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShinyRecord"
+      required: [memberCount, totalShinies, shinyPoints, recentCatches]
+
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+          nullable: true
+        role:
+          type: string
+        joinedAt:
+          type: string
+        shinyCount:
+          type: integer
+        shinyPoints:
+          type: integer
+      required: [id, username, displayName, role, joinedAt, shinyCount, shinyPoints]
+
+    CreateMemberBody:
+      type: object
+      properties:
+        username:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+          nullable: true
+        role:
+          type: string
+      required: [username, displayName, role]
+
+    ShinyRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        pokemonId:
+          type: integer
+        pokemonName:
+          type: string
+        pokemonSpriteUrl:
+          type: string
+        memberId:
+          type: integer
+        memberUsername:
+          type: string
+        memberDisplayName:
+          type: string
+        shinyTypeId:
+          type: integer
+          nullable: true
+        shinyTypeName:
+          type: string
+          nullable: true
+        shinyTypeEmoji:
+          type: string
+          nullable: true
+        shinyTypeIconUrl:
+          type: string
+          nullable: true
+        caughtAt:
+          type: string
+        catchMethod:
+          type: string
+          nullable: true
+        encounterNumber:
+          type: integer
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        isAlpha:
+          type: boolean
+        isSecret:
+          type: boolean
+      required: [id, pokemonId, pokemonName, pokemonSpriteUrl, memberId, memberUsername, memberDisplayName, caughtAt, isAlpha, isSecret]
+
+    CreateShinyBody:
+      type: object
+      properties:
+        pokemonId:
+          type: integer
+        pokemonName:
+          type: string
+        pokemonSpriteUrl:
+          type: string
+        memberId:
+          type: integer
+        shinyTypeId:
+          type: integer
+          nullable: true
+        caughtAt:
+          type: string
+        catchMethod:
+          type: string
+          nullable: true
+        encounterNumber:
+          type: integer
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        isAlpha:
+          type: boolean
+        isSecret:
+          type: boolean
+      required: [pokemonId, pokemonName, pokemonSpriteUrl, memberId, caughtAt, isAlpha, isSecret]
+
+    ShiniesListResponse:
+      type: object
+      properties:
+        shinies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShinyRecord"
+        total:
+          type: integer
+      required: [shinies, total]
+
+    ShinyType:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        emoji:
+          type: string
+          nullable: true
+        iconUrl:
+          type: string
+          nullable: true
+        isEnabled:
+          type: boolean
+        sortOrder:
+          type: integer
+      required: [id, name, code, isEnabled, sortOrder]
+
+    CreateShinyTypeBody:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        emoji:
+          type: string
+          nullable: true
+        iconUrl:
+          type: string
+          nullable: true
+        isEnabled:
+          type: boolean
+        sortOrder:
+          type: integer
+      required: [name, code, isEnabled, sortOrder]
+
+    Bounty:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        month:
+          type: string
+        isActive:
+          type: boolean
+        points:
+          type: integer
+          nullable: true
+      required: [id, title, description, month, isActive]
+
+    CreateBountyBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        month:
+          type: string
+        isActive:
+          type: boolean
+        points:
+          type: integer
+          nullable: true
+      required: [title, description, month, isActive]
+
+    NextEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        externalUrl:
+          type: string
+          nullable: true
+        eventDate:
+          type: string
+          nullable: true
+      required: [id, title, description]
+
+    UpdateNextEventBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        externalUrl:
+          type: string
+          nullable: true
+        eventDate:
+          type: string
+          nullable: true
+      required: [title, description]
+
+    PokedexEntry:
+      type: object
+      properties:
+        pokemonId:
+          type: integer
+        name:
+          type: string
+        spriteUrl:
+          type: string
+        types:
+          type: array
+          items:
+            type: string
+        generation:
+          type: integer
+        region:
+          type: string
+        ownedBy:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShinyRecord"
+        ownershipStatus:
+          type: string
+          enum: [owned, partial, missing]
+        evolutionLineStatus:
+          type: string
+          enum: [complete, partial, missing]
+      required: [pokemonId, name, spriteUrl, types, generation, region, ownedBy, ownershipStatus, evolutionLineStatus]
+
+    PokedexResponse:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/PokedexEntry"
+        totalOwned:
+          type: integer
+        totalPokemon:
+          type: integer
+        completionPercent:
+          type: number
+      required: [entries, totalOwned, totalPokemon, completionPercent]
+
+    UploadResult:
+      type: object
+      properties:
+        url:
+          type: string
+        filename:
+          type: string
+      required: [url, filename]
